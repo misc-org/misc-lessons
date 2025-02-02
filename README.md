@@ -25,7 +25,7 @@
 - これらのコマンドはすべて `sudo` 権限が必要です。
 ```shell
 # Windows
-New-NetFirewallRule -DisplayName "Allow Localhost Access" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+New-NetFirewallRule -DisplayName "Allow Localhost Access" -Direction Inbound -Protocol TCP -LocalPort 5173 -Action Allow
 
 # Mac
 sudo ipfw add 100 fwd
