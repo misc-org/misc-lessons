@@ -1,38 +1,36 @@
-# sv
+# Git / GitHub 講座
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## 使い方
 
-## Creating a project
+1. nodejs, npm, git をインストールしてください。
+   - nodejs, npm: https://nodejs.org/ja/
+   - git: https://git-scm.com/
+2. このリポジトリをクローンしてください。
+3. このリポジトリのディレクトリに移動してください。
+4. `npm install` を実行してください。
+5. http://localhost:5173 にアクセスしてください。
+6. 完成！
 
-If you're seeing this, you've probably already done this step. Congrats!
+## ローカル内での共有
 
-```bash
-# create a new project in the current directory
-npx sv create
+1. 各 OS ごとに、自身の IP アドレスを調べてください。
+   - Windows: `ipconfig`
+   - Mac: `ifconfig`
+   - Linux: `ifconfig`
+2. `npm run dev` を実行してください。
+3. `http://localhost:5173` を `http://<自身の IP アドレス>:5173` に変更してアクセスしてください。
 
-# create a new project in my-app
-npx sv create my-app
+**アドレスのローカル内に限定した公開について (ファイアウォールの設定)**
+- ファイアウォールの設定を変更して、ポート 5173 を開放してください。
+- これらのコマンドはすべて `sudo` 権限が必要です。
+```shell
+# Windows
+New-NetFirewallRule -DisplayName "Allow Localhost Access" -Direction Inbound -Protocol TCP -LocalPort 3000 -Action Allow
+
+# Mac
+sudo ipfw add 100 fwd
+sudo ipfw add 100 allow tcp from any to any 5173
+
+# Linux
+sudo iptables -A INPUT -p tcp --dport 5173 -j ACCEPT
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
