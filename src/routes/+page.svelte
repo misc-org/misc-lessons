@@ -1,22 +1,25 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	const pages = import.meta.glob('$lib/docs/*.svx');
+	const pages = import.meta.glob('$lib/docs/*/index.svx');
 	let contents: { title: string, link: string }[] = $state([]);
 
 	onMount(async () => {
 		for (const path in pages) {
 			const module = await pages[path]();
 			const { metadata } = module as { metadata: { title: string } };
-			contents.push({ title: metadata?.title || '', link: path });
-			console.log(contents);
+			const dir = path.split('/').slice(-2, -1)[0];
+			contents.push({ title: metadata?.title || '', link: dir });
 		}
 	});
 </script>
 
-<div class="w-full flex flex-col gap-4 items-start justify-start">
-	<h1 class="text-xl">講座一覧</h1>
-	<ul class="w-full relative flex flex-col items-start justify-start gap-2">
+<div class="w-full flex flex-col gap-5 items-start justify-start">
+	<div class="w-full flex flex-row items-center justify-between border-b-2 border-slate-300 pb-2">
+		<h1 class="text-2xl">講座一覧</h1>
+		<a href="terms" class="text-lg text-blue-500 underline">用語集</a>
+	</div>
+	<ul class="w-full relative flex flex-col items-start justify-start gap-2 px-2">
 		{#each contents as { title, link }}
 			<li class="w-full flex items-center justify-start gap-4">
 				<span class="circle"></span>
@@ -27,21 +30,25 @@
 </div>
 
 <style lang="postcss">
+    :root {
+        --color: #000;
+    }
+
     ul::after {
         content: '';
         display: block;
         width: 2px;
         height: 100%;
-        background-color: #000;
-				position: absolute;
-				top: 0;
-				left: 4px;
+        background-color: var(--color);
+        position: absolute;
+        top: 0;
+        left: 12px;
     }
 
     .circle {
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        background-color: #000;
+        background-color: var(--color);
     }
 </style>
