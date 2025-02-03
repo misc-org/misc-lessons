@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	const pages = import.meta.glob('$lib/docs/*/index.svx');
 	let contents: { title: string, link: string }[] = $state([]);
@@ -21,7 +22,7 @@
 	</div>
 	<ul class="w-full relative flex flex-col items-start justify-start gap-6 p-2">
 		{#each contents as { title, link }}
-			<li class="w-full flex items-center justify-start gap-4">
+			<li transition:fly={{ duration: 400, x: 0, y: 25 }} class="w-full flex items-center justify-start gap-4">
 				<span class="circle"></span>
 				<a href={link} class="text-lg text-blue-500 underline">{title}</a>
 			</li>
