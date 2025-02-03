@@ -19,7 +19,7 @@
 		<h1 class="text-2xl">講座一覧</h1>
 		<a href="terms" class="text-lg text-blue-500 underline">用語集</a>
 	</div>
-	<ul class="w-full relative flex flex-col items-start justify-start gap-2 px-2">
+	<ul class="w-full relative flex flex-col items-start justify-start gap-6 p-2">
 		{#each contents as { title, link }}
 			<li class="w-full flex items-center justify-start gap-4">
 				<span class="circle"></span>

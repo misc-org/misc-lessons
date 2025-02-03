@@ -1,5 +1,5 @@
 ---
-title: Git / GitHub についてえ
+title: GitHub アカウントと SSH キーの作成
 ---
 
 # { title }

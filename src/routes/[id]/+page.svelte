@@ -4,6 +4,7 @@
 	import type { PageData } from './$types';
 	import { type Component } from 'svelte';
 	import { getTerms } from '$lib/terms';
+	import { Spinner, TextPlaceholder } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
 
 	const { data } = $props<{ data: PageData }>();
@@ -198,5 +199,10 @@
 		/>
 	{/if}
 {:else}
-	<p>Loading...</p>
+    <div class="w-full h-full flex flex-col justify-center">
+        <div class="flex flex-row items-center">
+			<Spinner />
+	        <p>Loading...</p>
+		</div>
+	</div>
 {/if}
