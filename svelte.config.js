@@ -1,6 +1,6 @@
-import adapter from '@sveltejs/adapter-auto';
+import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { escapeSvelte, mdsvex} from "mdsvex";
+import { escapeSvelte, mdsvex } from "mdsvex";
 import { createHighlighter } from 'shiki';
 
 const theme = 'github-dark';
@@ -30,7 +30,12 @@ const config = {
 	extensions: ['.svelte', '.svx', '.md'],
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: '200.html',
+			base: '/misc-lessons'
+		})
 	}
 };
 
