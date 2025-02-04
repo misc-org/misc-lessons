@@ -2,8 +2,7 @@
 	import 'github-markdown-css/github-markdown-light.css';
 	import '$lib/docs/docs.pcss';
 	import type { PageData } from './$types';
-	import { type Component } from 'svelte';
-	import { getTerms } from '$lib/terms';
+	import { onMount, type Component } from 'svelte';
 	import { Spinner, TextPlaceholder } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
 
@@ -15,9 +14,18 @@
 		rect: DOMRect;
 	}
 
+	interface ModuleType {
+		default: Component;
+		metadata: {
+			title: string;
+		};
+	}
+
 	let Page: Component | null = $state(null);
 	let title: string = $state('');
-	const terms = getTerms().sort((a, b) => b.title.length - a.title.length);
+	const terms = [{ title: 'Git', description: 'Git は、分散型バージョン管理システムの一つです。' }];
+	const pageCache = new Map();
+
 	let container: HTMLElement | null = $state(null);
 	let isProcessing = $state(false);
 
@@ -28,8 +36,8 @@
 
 	const TERM_BOUNDARY = new RegExp(
 		'([^\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}]|^)' +
-		'(TARGET)' +
-		'(?=[^\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}]|$)',
+			'(TARGET)' +
+			'(?=[^\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}]|$)',
 		'gu'
 	);
 
@@ -68,48 +76,41 @@
 	};
 
 	const termLinksCache = new Map(
-		terms.map(term => [
-			term.title,
-			createTermLink(term)
-		])
+		terms.map((term: { title: string; description: string }) => [term.title, createTermLink(term)])
 	);
 
 	const wrapTermsWithLinks = (content: string) => {
 		let processed = content;
-		terms.forEach(term => {
+		terms.forEach((term: { title: string; description: string }) => {
 			const regex = new RegExp(TERM_BOUNDARY.source.replace('TARGET', term.title), 'gu');
 			processed = processed.replace(regex, termLinksCache.get(term.title) || '$1$2');
 		});
 		return processed;
-	}
+	};
 
 	const processTextNodes = (element: HTMLElement) => {
 		if (!element || element.dataset.processed) return;
 
 		const links = element.getElementsByTagName('a');
-		Array.from(links).forEach(link => {
+		Array.from(links).forEach((link) => {
 			link.dataset.processed = 'true';
 		});
 
-		const walker = document.createTreeWalker(
-			element,
-			NodeFilter.SHOW_TEXT,
-			{
-				acceptNode: node => {
-					if (node.parentElement?.dataset.processed) {
-						return NodeFilter.FILTER_REJECT;
-					}
-					return node.textContent?.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+		const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+			acceptNode: (node) => {
+				if (node.parentElement?.dataset.processed) {
+					return NodeFilter.FILTER_REJECT;
 				}
+				return node.textContent?.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
 			}
-		);
+		});
 
 		const textNodes: Text[] = [];
 		while (walker.nextNode()) {
 			textNodes.push(walker.currentNode as Text);
 		}
 
-		textNodes.forEach(textNode => {
+		textNodes.forEach((textNode) => {
 			if (textNode.textContent?.trim()) {
 				const span = document.createElement('span');
 				span.innerHTML = wrapTermsWithLinks(textNode.textContent);
@@ -121,17 +122,47 @@
 		});
 
 		element.dataset.processed = 'true';
-	}
+	};
 
 	const processTargetElements = (parentNode: HTMLElement) => {
 		const elements = parentNode.querySelectorAll('p, li, td, th');
-		elements.forEach(element => {
+		elements.forEach((element) => {
 			if (element instanceof HTMLElement && !element.dataset.processed) {
 				processTextNodes(element);
 			}
 		});
 	};
 
+	const loadPage = async (lesson: string, id: string) => {
+		const cacheKey = `${lesson}-${id}`;
+
+		if (pageCache.has(cacheKey)) {
+			const cached = pageCache.get(cacheKey);
+			Page = cached.component;
+			title = cached.title;
+			return;
+		}
+
+		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/docs/**/index.svx', {
+			eager: true
+		});
+
+		const pagePath = `/src/lib/docs/${lesson}/docs/${id}/index.svx`;
+		const pageModule = pages[pagePath];
+
+		if (!pageModule) {
+			throw new Error(`Page not found: ${pagePath}`);
+		}
+
+		const result = {
+			component: pageModule.default,
+			title: pageModule.metadata.title
+		};
+
+		pageCache.set(cacheKey, result);
+		Page = result.component;
+		title = result.title;
+	};
 
 	$effect(() => {
 		if (!Page || !container) return;
@@ -174,18 +205,21 @@
 		};
 	});
 
-	import(`$lib/docs/${data.props.id}/index.svx`).then(module => {
-		Page = module.default;
-		title = module.metadata.title;
+	onMount(async () => {
+		try {
+			await loadPage(data.props.lesson, data.props.id);
+		} catch (error) {
+			console.error('Failed to load page:', error);
+		}
 	});
 </script>
 
 <svelte:head>
-	<title>{"Git / GitHub 講座 - " + title}</title>
+	<title>{'Git / GitHub 講座 - ' + title}</title>
 </svelte:head>
 
 {#if Page}
-	<div class="w-full h-full markdown-body" bind:this={container}>
+	<div class="markdown-body h-full w-full" bind:this={container}>
 		<Page />
 	</div>
 	{#if activeTerm}
@@ -199,10 +233,10 @@
 		/>
 	{/if}
 {:else}
-    <div class="w-full h-full flex flex-col justify-center">
-        <div class="flex flex-row items-center">
+	<div class="flex h-full w-full flex-col justify-center">
+		<div class="flex flex-row items-center">
 			<Spinner />
-	        <p>Loading...</p>
+			<p>Loading...</p>
 		</div>
 	</div>
 {/if}

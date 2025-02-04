@@ -1,55 +1,61 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
+    import { onMount } from 'svelte';
+    import { fly } from 'svelte/transition';
+    import { lessons } from '$lib/docs';
 
-	const pages = import.meta.glob('$lib/docs/*/index.svx');
-	let contents: { title: string, link: string }[] = $state([]);
+    let contents: { title: string; id: string; img: string }[] = $state([]);
+    
+    const imageCache = new Map();
+    
+    const getImage = async (lessonId: string, imgName: string) => {
+        const cacheKey = `${lessonId}-${imgName}`;
+        
+        if (imageCache.has(cacheKey)) {
+            return imageCache.get(cacheKey);
+        }
+        
+        const images = import.meta.glob('$lib/docs/**/img/*.{png,jpg,jpeg,svg}', {
+            eager: true,
+            query: '?url',
+            import: 'default'
+        });
+        
+        const imgPath = `/src/lib/docs/${lessonId}/img/${imgName}`;
+        const imageUrl = images[imgPath] || '';
+        
+        imageCache.set(cacheKey, imageUrl);
+        return imageUrl;
+    };
 
-	onMount(async () => {
-		for (const path in pages) {
-			const module = await pages[path]();
-			const { metadata } = module as { metadata: { title: string } };
-			const dir = path.split('/').slice(-2, -1)[0];
-			contents.push({ title: metadata?.title || '', link: dir });
-		}
-	});
+    onMount(async () => {
+        contents = await Promise.all(
+            lessons.map(async (lesson) => ({
+                ...lesson,
+                img: await getImage(lesson.id, lesson.img)
+            }))
+        );
+    });
 </script>
 
-<div class="w-full flex flex-col gap-5 items-start justify-start">
-	<div class="w-full flex flex-row items-center justify-between border-b-2 border-slate-300 pb-2">
-		<h1 class="text-2xl">講座一覧</h1>
-		<a href="terms" class="text-lg text-blue-500 underline">用語集</a>
-	</div>
-	<ul class="w-full relative flex flex-col items-start justify-start gap-6 p-2">
-		{#each contents as { title, link }}
-			<li transition:fly={{ duration: 400, x: 0, y: 25 }} class="w-full flex items-center justify-start gap-4">
-				<span class="circle"></span>
-				<a href={link} class="text-lg text-blue-500 underline">{title}</a>
-			</li>
-		{/each}
-	</ul>
+<div class="flex w-full flex-col items-start justify-start gap-5">
+    <div class="flex w-full flex-row items-center justify-between border-b-2 border-slate-300 pb-2">
+        <h1 class="text-2xl">講座一覧</h1>
+    </div>
+    <div class="grid w-full grid-cols-1 gap-6 p-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {#each contents as { title, id, img }, i}
+            <div
+                transition:fly={{ duration: 500, delay: 100 * i, x: 0, y: 25 }}
+                class="flex flex-col items-center justify-start gap-2"
+            >
+                <a href={id} class="w-full shadow-md">
+                    <img 
+                        src={img} 
+                        alt={title} 
+                        class="w-full max-w-[500px] rounded-md object-cover" 
+                    />
+                </a>
+                <span class="text-lg">{title}</span>
+            </div>
+        {/each}
+    </div>
 </div>
-
-<style lang="postcss">
-    :root {
-        --color: #000;
-    }
-
-    ul::after {
-        content: '';
-        display: block;
-        width: 2px;
-        height: 100%;
-        background-color: var(--color);
-        position: absolute;
-        top: 0;
-        left: 12px;
-    }
-
-    .circle {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: var(--color);
-    }
-</style>
