@@ -3,6 +3,8 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { escapeSvelte, mdsvex } from "mdsvex";
 import { createHighlighter } from 'shiki';
 
+const dev = process.env.NODE_ENV === 'development';
+
 const theme = 'github-dark';
 const highlighter = await createHighlighter({
 	themes: [theme],
@@ -35,7 +37,10 @@ const config = {
 			assets: 'build',
 			fallback: 'index.html',
 			base: '/misc-lessons'
-		})
+		}),
+		paths: {
+			base: dev ? '' : '/misc-lessons'
+		}
 	}
 };
 
