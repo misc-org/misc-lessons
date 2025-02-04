@@ -1,6 +1,7 @@
 <script lang="ts">
     import '../app.css';
     import '@fontsource-variable/m-plus-1';
+    import { base } from '$app/paths';
     import src from '$lib/img/logo.svg';
 
     let {children} = $props();

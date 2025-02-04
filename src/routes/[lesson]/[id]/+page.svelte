@@ -2,6 +2,7 @@
 	import 'github-markdown-css/github-markdown-light.css';
 	import '$lib/docs/docs.pcss';
 	import type { PageData } from './$types';
+	import { base } from '$app/paths';
 	import { onMount, type Component } from 'svelte';
 	import { Spinner, TextPlaceholder } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
@@ -57,7 +58,7 @@
 	};
 
 	const createTermLink = (term: { title: string; description: string }) => {
-		return `$1<a href="/terms#${term.title}"
+		return `$1<a href="${base}/terms#${term.title}"
         class="term-link"
         data-term-title="${term.title}"
         data-term-description="${term.description}"

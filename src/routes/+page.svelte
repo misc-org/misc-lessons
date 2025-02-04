@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { base } from '$app/paths';
     import { fly } from 'svelte/transition';
     import { lessons } from '$lib/docs';
 
@@ -47,7 +48,7 @@
                 transition:fly={{ duration: 500, delay: 100 * i, x: 0, y: 25 }}
                 class="flex flex-col items-center justify-start gap-2"
             >
-                <a href={id} class="w-fulld">
+                <a href={base + id} class="w-fulld">
                     <img 
                         src={img} 
                         alt={title} 
