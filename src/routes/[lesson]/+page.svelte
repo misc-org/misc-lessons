@@ -2,7 +2,6 @@
     import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
     import { type PageData } from '../$types';
-    import { lessons } from '$lib/docs';
 
     const { data } = $props<{ data: PageData }>();
     const allPages = import.meta.glob('$lib/docs/**/docs/*/index.svx');
