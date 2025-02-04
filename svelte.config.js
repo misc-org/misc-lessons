@@ -33,7 +33,7 @@ const config = {
 		adapter: adapter({
 			pages: 'build',
 			assets: 'build',
-			fallback: '200.html',
+			fallback: 'index.html',
 			base: '/misc-lessons'
 		})
 	}
