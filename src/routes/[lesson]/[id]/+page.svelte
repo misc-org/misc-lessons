@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import { base } from '$app/paths';
 	import { onMount, type Component } from 'svelte';
-	import { Spinner, TextPlaceholder } from 'flowbite-svelte';
+	import { Spinner, Skeleton } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
 
 	const { data } = $props<{ data: PageData }>();
@@ -235,9 +235,16 @@
 	{/if}
 {:else}
 	<div class="flex h-full w-full flex-col justify-center">
-		<div class="flex flex-row items-center">
-			<Spinner />
-			<p>Loading...</p>
+		<div class="flex w-full flex-row items-center justify-center gap-4">
+			<Spinner size="6" />
+			<p class="text-lg">Loading...</p>
+		</div>
+		<div class="flex w-full flex-col items-center justify-start gap-5">
+			<Skeleton size="sm" />
+			<Skeleton size="md" />
+			<Skeleton size="lg" />
+			<Skeleton size="xl" />
+			<Skeleton size="xxl" />
 		</div>
 	</div>
 {/if}
