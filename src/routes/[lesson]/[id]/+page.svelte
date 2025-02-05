@@ -144,11 +144,11 @@
 			return;
 		}
 
-		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/docs/**/index.svx', {
+		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/lessons/**/index.svx', {
 			eager: true
 		});
 
-		const pagePath = `/src/lib/docs/${lesson}/docs/${id}/index.svx`;
+		const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
 		const pageModule = pages[pagePath];
 
 		if (!pageModule) {
