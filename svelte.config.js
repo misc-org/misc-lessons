@@ -39,7 +39,8 @@ const config = {
 			base: '/misc-lessons'
 		}),
 		paths: {
-			base: dev ? '' : '/misc-lessons'
+			base: dev ? '' : '/misc-lessons',
+			relative: false
 		}
 	}
 };
