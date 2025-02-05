@@ -3,39 +3,21 @@
     import { base } from '$app/paths';
     import { fly } from 'svelte/transition';
     import { lessons } from '$lib/docs';
-
-    let contents: { title: string; id: string; img: string }[] = $state([]);
     
     const imageCache = new Map();
     
     const getImage = async (lessonId: string, imgName: string) => {
         const cacheKey = `${lessonId}-${imgName}`;
-        
-        if (imageCache.has(cacheKey)) {
-            return imageCache.get(cacheKey);
-        }
-        
-        const images = import.meta.glob('$lib/docs/**/img/*.{png,jpg,jpeg,svg}', {
-            eager: true,
-            query: '?url',
-            import: 'default'
-        });
-        
-        const imgPath = `/src/lib/docs/${lessonId}/img/${imgName}`;
-        const imageUrl = images[imgPath] || '';
-        
-        imageCache.set(cacheKey, imageUrl);
-        return imageUrl;
+        return imageCache.get(cacheKey) || '';
     };
 
-    onMount(async () => {
-        contents = await Promise.all(
-            lessons.map(async (lesson) => ({
-                ...lesson,
-                img: await getImage(lesson.id, lesson.img)
-            }))
-        );
-    });
+    onMount(() => {
+        lessons.forEach(lesson => {
+            if (lesson.img) {
+                imageCache.set(`${lesson.id}-${lesson.img}`, lesson.img);
+            }
+        })
+    })
 </script>
 
 <div class="flex w-full flex-col items-start justify-start gap-5">
@@ -43,7 +25,7 @@
         <h1 class="text-2xl">講座一覧</h1>
     </div>
     <div class="grid w-full grid-cols-1 gap-6 p-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {#each contents as { title, id, img }, i}
+        {#each lessons as { title, id, img }, i}
             <div
                 transition:fly={{ duration: 500, delay: 100 * i, x: 0, y: 25 }}
                 class="flex flex-col items-center justify-start gap-2"

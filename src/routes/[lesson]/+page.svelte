@@ -5,7 +5,7 @@
     import { type PageData } from '../$types';
 
     const { data } = $props<{ data: PageData }>();
-    const allPages = import.meta.glob('$lib/docs/**/docs/*/index.svx');
+    const allPages = import.meta.glob('$lib/docs/**/lessons/*/index.svx');
     const lesson: { title: string, id: string } = data.props;
     let contents: { title: string, link: string }[] = $state([]);
     

@@ -5,6 +5,12 @@ type Lesson = {
     title: string;
     id: string;
     img: string;
+    terms: Term[];
+}
+
+interface Term {
+    title: string;
+    description: string;
 }
 
 const lessons: Lesson[] = [
