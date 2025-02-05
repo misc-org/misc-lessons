@@ -115,7 +115,7 @@
 			if (textNode.textContent?.trim()) {
 				const span = document.createElement('span');
 				span.innerHTML = wrapTermsWithLinks(textNode.textContent);
-				console.log(span);
+				//console.log(span);
 				if (textNode.parentNode) {
 					textNode.parentNode.replaceChild(span, textNode);
 				}

@@ -1,60 +1,76 @@
 <script lang="ts">
-    import '../app.css';
-    import '@fontsource-variable/m-plus-1';
-    import Icon from '@iconify/svelte';
-    import { base } from '$app/paths';
-    import { writable, type Writable } from 'svelte/store';
-    import src from '$lib/img/logo.svg';
+	import '../app.css';
+	import '@fontsource-variable/m-plus-1';
+	import Icon from '@iconify/svelte';
+	import { base } from '$app/paths';
+	import src from '$lib/img/logo.svg';
+	import { onMount } from 'svelte';
 
-    let {children} = $props();
+	let { children } = $props();
 
-    const main: Writable<HTMLElement | null> = writable(null);
-    const isScrollable = writable(false);
+	let isScrollable = $state(false);
+	let scrollTop = $state(0);
+	let scrollHeight = $state(0);
+	let clientHeight = $state(0);
 
-    const checkScroll = () => {
-        if ($main) {
-            // スクロール可能かつ一番上から100px以上スクロールされているか
-            isScrollable.set($main.scrollHeight > $main.clientHeight || $main.scrollTop > 100);
-        }
-    };
+	onMount(() => {
+		const handleScroll = () => {
+			if (typeof window !== 'undefined') {
+				scrollTop = window.scrollY;
+				scrollHeight = document.documentElement.scrollHeight;
+				clientHeight = document.documentElement.clientHeight;
+			}
+		};
 
-    $effect(() => {
-        checkScroll();
-    })
+		if (typeof window !== 'undefined') {
+			window.addEventListener('scroll', handleScroll);
+            handleScroll();
+		}
+
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('scroll', handleScroll);
+			}
+		};
+	});
+
+	$effect(() => {
+		isScrollable = scrollHeight > clientHeight && scrollTop > 100;
+	});
 </script>
 
 <main
-    bind:this={$main}
-    onscroll={checkScroll}
-    class="relative min-h-[100svh] flex flex-col items-center justify-start bg-[#f0f0f0]"
+	class="relative flex min-h-[100svh] flex-col items-center justify-start overflow-auto bg-[#f0f0f0]"
 >
-<span class="fixed top-20 left-20">{$main?.scrollHeight + ' ' + $main?.clientHeight}</span>
-    {#if $isScrollable}
-        <div>
-            <button
-                onclick={() => $main?.scrollTo({ top: 0, behavior: 'smooth' })}
-                class="fixed bottom-4 right-4 w-[40px] h-[40px] rounded-full flex items-center justify-center shadow-md"
-            >
-                <Icon icon="mdi:arrow-up" class="text-slate-900 w-6 h-6" />
-            </button>
-        </div>
-    {/if}
-    <header class="w-full h-[60px] bg-[#0e1734] flex gap-5 items-center justify-center">
-        <a href="/" class="w-fit h-full flex items-center justify-center gap-4">
-            <img src={src} alt="svelte" class="h-[20px] object-cover"/>
-            <h1 class="text-[#fff] text-xl font-bold">講座総合 MISC Lessons</h1>
-        </a>
-    </header>
-    <div class="w-full min-h-[calc(100svh-120px)] flex flex-col items-center justify-start py-16 px-24">
-        {@render children()}
-    </div>
-    <footer class="w-full h-[60px] bg-[#0e1734] flex items-center justify-center">
-        <p class="text-[#fff] text-sm">© 2025 MISC</p>
-    </footer>
+	<div class="fixed right-6 flex h-[40px] w-[40px] duration-300 transition-[opacity,bottom] {isScrollable ? 'opacity-100 bottom-[76px]' : 'opacity-0 bottom-[60px]'}">
+		<button
+			onclick={() => {
+                if (typeof window === 'undefined') return;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+			class="w-full h-full bg-slate-50 flex items-center justify-center rounded-full shadow-md"
+		>
+			<Icon icon="mdi:arrow-up" class="h-6 w-6 text-slate-900" />
+		</button>
+	</div>
+	<header class="flex h-[60px] w-full items-center justify-center gap-5 bg-[#0e1734]">
+		<a href="/" class="flex h-full w-fit items-center justify-center gap-4">
+			<img {src} alt="svelte" class="h-[20px] object-cover" />
+			<h1 class="text-xl font-bold text-[#fff]">講座総合 MISC Lessons</h1>
+		</a>
+	</header>
+	<div
+		class="flex min-h-[calc(100svh-120px)] w-full flex-col items-center justify-start px-24 py-16"
+	>
+		{@render children()}
+	</div>
+	<footer class="flex h-[60px] w-full items-center justify-center bg-[#0e1734]">
+		<p class="text-sm text-[#fff]">© 2025 MISC</p>
+	</footer>
 </main>
 
 <style lang="postcss">
-    :global(body) {
-        font-family: 'M PLUS 1 Variable', sans-serif;
-    }
+	:global(body) {
+		font-family: 'M PLUS 1 Variable', sans-serif;
+	}
 </style>
