@@ -30,14 +30,14 @@
                 transition:fly={{ duration: 500, delay: 100 * i, x: 0, y: 25 }}
                 class="flex flex-col items-center justify-start gap-2"
             >
-                <a href={base + id} class="w-fulld">
+                <a href={base + id} class="w-full flex flex-col items-center justify-center gap-2">
                     <img 
                         src={img} 
                         alt={title} 
                         class="w-full max-w-[500px] rounded-md object-cover shadow-md" 
                     />
+                    <span class="text-md">{title}</span>
                 </a>
-                <span class="text-lg">{title}</span>
             </div>
         {/each}
     </div>

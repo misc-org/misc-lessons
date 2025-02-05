@@ -1,5 +1,6 @@
 import gitGitHub from './git-github';
-import htmlCss from './html-css';
+import htmlCss from './html-css-js';
+import unity from './unity';
 
 type Lesson = {
     title: string;
@@ -16,6 +17,7 @@ interface Term {
 const lessons: Lesson[] = [
     gitGitHub,
     htmlCss,
+    unity,
 ]
 
 export { lessons, type Lesson };
