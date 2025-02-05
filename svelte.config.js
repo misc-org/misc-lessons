@@ -33,15 +33,20 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-			pages: 'build',
-			assets: 'build',
-			fallback: 'index.html',
-			base: '/misc-lessons'
-		}),
-		paths: {
-			base: dev ? '' : '/misc-lessons',
-			relative: false
-		}
+            pages: 'build',
+            assets: 'build',
+            fallback: 'index.html',
+            precompress: false,
+            strict: true
+        }),
+        paths: {
+            base: dev ? '' : '/misc-lessons',
+            relative: true
+        },
+        prerender: {
+            handleHttpError: 'warn',
+            entries: ['*']
+        },
 	}
 };
 
