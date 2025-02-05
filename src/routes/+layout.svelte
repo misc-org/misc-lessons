@@ -54,7 +54,7 @@
 		</button>
 	</div>
 	<header class="flex h-[60px] w-full items-center justify-center gap-5 bg-[#0e1734]">
-		<a href="/" class="flex h-full w-fit items-center justify-center gap-4">
+		<a href={base + "/"} class="flex h-full w-fit items-center justify-center gap-4">
 			<img {src} alt="svelte" class="h-[20px] object-cover" />
 			<h1 class="text-xl font-bold text-[#fff]">講座総合 MISC Lessons</h1>
 		</a>
