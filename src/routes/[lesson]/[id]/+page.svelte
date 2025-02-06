@@ -4,7 +4,6 @@
 	import type { PageData } from './$types';
 	import { base } from '$app/paths';
 	import { onMount, type Component } from 'svelte';
-	import { render } from 'svelte/server';
 	import { rewriteTags } from '$lib/utils/rewrite';
 	import { Spinner, Skeleton } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
@@ -149,13 +148,10 @@
 
 		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/lessons/**/index.svx', {
 			eager: true,
-			import: 'default'
 		});
 
 		const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
 		const pageModule = pages[pagePath];
-
-		const { html: renderHtml } = render(pageModule.default)
 
 		if (!pageModule) {
 			throw new Error(`Page not found: ${pagePath}`);
@@ -163,13 +159,11 @@
 
 		const result = {
 			component: pageModule.default,
-			html: renderHtml,
 			title: pageModule.metadata.title
 		};
 
 		pageCache.set(cacheKey, result);
 		Page = result.component;
-		html = result.html;
 		title = result.title;
 	};
 
@@ -193,7 +187,7 @@
 		const observer = new MutationObserver(() => {
 			if (!isProcessing && container) {
 				isProcessing = true;
-				processTargetElements(container);
+				//processTargetElements(container);
 				isProcessing = false;
 			}
 		});
@@ -203,7 +197,7 @@
 			subtree: true
 		});
 
-		processTargetElements(container);
+		//processTargetElements(container);
 
 		return () => {
 			observer.disconnect();
@@ -220,6 +214,7 @@
 		try {
 			await loadPage(data.props.lesson, data.props.id);
 
+			html = data.props.lessonHtml;
 			html = rewriteTags(html, terms);
 		} catch (error) {
 			console.error('Failed to load page:', error);
