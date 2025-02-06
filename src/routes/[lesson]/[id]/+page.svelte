@@ -4,6 +4,8 @@
 	import type { PageData } from './$types';
 	import { base } from '$app/paths';
 	import { onMount, type Component } from 'svelte';
+	import { render } from 'svelte/server';
+	import { rewriteTags } from '$lib/utils/rewrite';
 	import { Spinner, Skeleton } from 'flowbite-svelte';
 	import Tip from '$lib/component/Tip.svelte';
 
@@ -24,7 +26,7 @@
 
 	let Page: Component | null = $state(null);
 	let title: string = $state('');
-	const terms = [{ title: 'Git', description: 'Git は、分散型バージョン管理システムの一つです。' }];
+	const terms = data.props.lesson.terms;
 	const pageCache = new Map();
 
 	let container: HTMLElement | null = $state(null);
@@ -140,16 +142,20 @@
 		if (pageCache.has(cacheKey)) {
 			const cached = pageCache.get(cacheKey);
 			Page = cached.component;
+			html = cached.html;
 			title = cached.title;
 			return;
 		}
 
 		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/lessons/**/index.svx', {
-			eager: true
+			eager: true,
+			import: 'default'
 		});
 
 		const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
 		const pageModule = pages[pagePath];
+
+		const { html: renderHtml } = render(pageModule.default)
 
 		if (!pageModule) {
 			throw new Error(`Page not found: ${pagePath}`);
@@ -157,11 +163,13 @@
 
 		const result = {
 			component: pageModule.default,
+			html: renderHtml,
 			title: pageModule.metadata.title
 		};
 
 		pageCache.set(cacheKey, result);
 		Page = result.component;
+		html = result.html;
 		title = result.title;
 	};
 
@@ -206,9 +214,13 @@
 		};
 	});
 
+	let html = $state('');
+
 	onMount(async () => {
 		try {
 			await loadPage(data.props.lesson, data.props.id);
+
+			html = rewriteTags(html, terms);
 		} catch (error) {
 			console.error('Failed to load page:', error);
 		}
@@ -221,7 +233,7 @@
 
 {#if Page}
 	<div class="markdown-body h-full w-full" bind:this={container}>
-		<Page />
+		{@html html}
 	</div>
 	{#if activeTerm}
 		<Tip
