@@ -10,16 +10,5 @@ export default defineConfig({
 		host: true,
 		port: 5173
 	},
-	build: {
-		assetsDir: '_app',
-		rollupOptions: {
-		  output: {
-			assetFileNames: (assetInfo) => {
-			  return `_app/immutable/assets/${assetInfo.name}`;
-			},
-			chunkFileNames: '_app/immutable/chunks/[name].[hash].js',
-			entryFileNames: '_app/immutable/entry/[name].[hash].js',
-		  }
-		}
-	  }
+	base: '/misc-lessons/'
 });
