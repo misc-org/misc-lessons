@@ -2,7 +2,6 @@
 	import 'github-markdown-css/github-markdown-light.css';
 	import '$lib/docs/docs.pcss';
 	import type { PageData } from './$types';
-	import { base } from '$app/paths';
 	import { onMount, type Component } from 'svelte';
 	import { rewriteTags } from '$lib/utils/rewrite';
 	import { Spinner, Skeleton } from 'flowbite-svelte';
@@ -36,13 +35,6 @@
 	let activeTerm = $state<{ title: string; description: string } | null>(null);
 	const MAX_DESCRIPTION_LENGTH = 100;
 
-	const TERM_BOUNDARY = new RegExp(
-		'([^\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}]|^)' +
-			'(TARGET)' +
-			'(?=[^\\p{Script=Hiragana}\\p{Script=Katakana}\\p{Script=Han}]|$)',
-		'gu'
-	);
-
 	const truncateDescription = (text: string) =>
 		text.length <= MAX_DESCRIPTION_LENGTH ? text : `${text.slice(0, MAX_DESCRIPTION_LENGTH)}...`;
 
@@ -59,7 +51,7 @@
 	};
 
 	const createTermLink = (term: { title: string; description: string }) => {
-		return `$1<a href="${base}/terms#${term.title}"
+		return `$1<a href="/terms#${term.title}"
         class="term-link"
         data-term-title="${term.title}"
         data-term-description="${term.description}"
@@ -75,64 +67,6 @@
                 }));
             });"
         >${term.title}</a>`;
-	};
-
-	const termLinksCache = new Map(
-		//terms.map((term: { title: string; description: string }) => [term.title, createTermLink(term)])
-	);
-
-	const wrapTermsWithLinks = (content: string) => {
-		let processed = content;
-		terms.forEach((term: { title: string; description: string }) => {
-			const regex = new RegExp(TERM_BOUNDARY.source.replace('TARGET', term.title), 'gu');
-			//processed = processed.replace(regex, termLinksCache.get(term.title) || '$1$2');
-		});
-		return processed;
-	};
-
-	const processTextNodes = (element: HTMLElement) => {
-		if (!element || element.dataset.processed) return;
-
-		const links = element.getElementsByTagName('a');
-		Array.from(links).forEach((link) => {
-			link.dataset.processed = 'true';
-		});
-
-		const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
-			acceptNode: (node) => {
-				if (node.parentElement?.dataset.processed) {
-					return NodeFilter.FILTER_REJECT;
-				}
-				return node.textContent?.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-			}
-		});
-
-		const textNodes: Text[] = [];
-		while (walker.nextNode()) {
-			textNodes.push(walker.currentNode as Text);
-		}
-
-		textNodes.forEach((textNode) => {
-			if (textNode.textContent?.trim()) {
-				const span = document.createElement('span');
-				span.innerHTML = wrapTermsWithLinks(textNode.textContent);
-				//console.log(span);
-				if (textNode.parentNode) {
-					textNode.parentNode.replaceChild(span, textNode);
-				}
-			}
-		});
-
-		element.dataset.processed = 'true';
-	};
-
-	const processTargetElements = (parentNode: HTMLElement) => {
-		const elements = parentNode.querySelectorAll('p, li, td, th');
-		elements.forEach((element) => {
-			if (element instanceof HTMLElement && !element.dataset.processed) {
-				processTextNodes(element);
-			}
-		});
 	};
 
 	const loadPage = async (lesson: string, id: string) => {
@@ -187,7 +121,6 @@
 		const observer = new MutationObserver(() => {
 			if (!isProcessing && container) {
 				isProcessing = true;
-				//processTargetElements(container);
 				isProcessing = false;
 			}
 		});
@@ -196,8 +129,6 @@
 			childList: true,
 			subtree: true
 		});
-
-		//processTargetElements(container);
 
 		return () => {
 			observer.disconnect();
@@ -208,14 +139,13 @@
 		};
 	});
 
-	let html = $state('');
+	let html: { head: string, html: string, body: string } = $state({ head: '', html: '', body: '' });
 
 	onMount(async () => {
 		try {
 			await loadPage(data.props.lesson, data.props.id);
 
 			html = data.props.lessonHtml.html;
-			//html.body = rewriteTags(html.body.join(''), terms);
 		} catch (error) {
 			console.error('Failed to load page:', error);
 		}

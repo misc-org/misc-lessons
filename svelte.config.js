@@ -1,6 +1,6 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { escapeSvelte, mdsvex } from "mdsvex";
+import { escapeSvelte, mdsvex } from 'mdsvex';
 import { createHighlighter } from 'shiki';
 
 const dev = process.env.NODE_ENV === 'development';
@@ -33,20 +33,19 @@ const config = {
 
 	kit: {
 		adapter: adapter({
-            pages: 'build',
-            assets: 'build',
-            fallback: 'index.html',
-            precompress: false,
-            strict: true
-        }),
-        paths: {
-            base: dev ? '' : '/misc-lessons',
-            relative: true
-        },
-        prerender: {
-            handleHttpError: 'warn',
-            entries: ['*']
-        },
+			pages: 'build',
+			assets: 'build',
+			fallback: 'index.html',
+			precompress: false,
+			strict: true,
+		}),
+		paths: {
+			relative: true
+		},
+		prerender: {
+			handleHttpError: 'warn',
+			entries: ['*']
+		}
 	}
 };
 

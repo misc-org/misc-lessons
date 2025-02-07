@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { base } from '$app/paths';
     import { fly } from 'svelte/transition';
     import { type PageData } from '../$types';
 
@@ -41,13 +40,13 @@
 <div class="w-full flex flex-col gap-5 items-start justify-start">
     <div class="w-full flex flex-row items-center justify-between border-b-2 border-slate-300 pb-2">
         <h1 class="text-2xl">講座一覧 - {lesson.title}</h1>
-        <a href={base + "/terms/" + lesson.id} class="text-lg text-blue-500 underline">用語集</a>
+        <a href={"/terms/" + lesson.id} class="text-lg text-blue-500 underline">用語集</a>
     </div>
     <ul class="w-full relative flex flex-col items-start justify-start gap-6 p-2">
         {#each contents as { title, link }, i}
             <li transition:fly={{ duration: 500, delay: 100 * i , x: 0, y: 25 }} class="w-full flex items-center justify-start gap-4">
                 <span class="circle"></span>
-                <a href={lesson.id + "/" + link} class="text-lg text-blue-500 underline">{title}</a>
+                <a href={"/" + lesson.id + "/" + link} class="text-lg text-blue-500 underline">{title}</a>
             </li>
         {/each}
     </ul>

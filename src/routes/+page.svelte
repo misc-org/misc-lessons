@@ -1,13 +1,13 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { base } from '$app/paths';
     import { fly } from 'svelte/transition';
     import { lessons } from '$lib/docs';
     
     const imageCache = new Map();
     
-    const getImage = async (lessonId: string, imgName: string) => {
+    const getImage = (lessonId: string, imgName: string) => {
         const cacheKey = `${lessonId}-${imgName}`;
+        console.log(cacheKey, imageCache.get(cacheKey));
         return imageCache.get(cacheKey) || '';
     };
 
@@ -30,9 +30,9 @@
                 transition:fly={{ duration: 500, delay: 100 * i, x: 0, y: 25 }}
                 class="flex flex-col items-center justify-start gap-2"
             >
-                <a href={base + "/" + id} class="w-full flex flex-col items-center justify-center gap-2">
-                    <img 
-                        src={img} 
+                <a href={"/" + id} class="w-full flex flex-col items-center justify-center gap-2">
+                    <img
+                        src={img}
                         alt={title} 
                         class="w-full max-w-[500px] rounded-md object-cover shadow-md" 
                     />

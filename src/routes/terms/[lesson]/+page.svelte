@@ -1,6 +1,5 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { base } from "$app/paths";
     import type { PageData } from "./$types";
 
     const { data } = $props<{ data: PageData }>();
@@ -33,7 +32,7 @@
 <div class="w-full flex flex-col items-start justify-start gap-10">
 	<div class="w-full flex flex-row items-center justify-between border-b-2 border-slate-300 pb-2">
 		<h1 class="text-2xl">用語集 - {data.props.title}</h1>
-		<a href={base + "/" + data.props.id} class="text-lg text-blue-500 underline">講座一覧 - {data.props.title}</a>
+		<a href={"/" + data.props.id} class="text-lg text-blue-500 underline">講座一覧 - {data.props.title}</a>
 	</div>
     <ul class="w-full flex flex-col items-start justify-start gap-10 px-2">
         {#each terms as term}
