@@ -1,5 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import { render } from 'svelte/server';
+import { rewriteTags } from "$lib/utils/rewrite";
 
 const loadPage = async (lesson: string, id: string) => {
 	const pages = import.meta.glob('/src/lib/docs/**/lessons/**/index.svx', {
@@ -8,16 +9,22 @@ const loadPage = async (lesson: string, id: string) => {
 	});
 
 	const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
-	const pageModule: { default: any, metadata: any } = pages[pagePath] as any;
+	const pageModule: { default: any, metadata: any, render: any } = pages[pagePath] as any;
 
 	if (!pageModule) {
 		throw new Error(`Page not found: ${pagePath}`);
 	}
 
+	let renderHtml = render(pageModule, {});
+
+	const terms = await import(`\$lib/docs/${lesson}/terms/index.json`)
+
+	renderHtml.body = rewriteTags(renderHtml.body, terms.default)
+
 	return {
 		component: pageModule.default,
-		html: render(pageModule.default, {}),
-		title: pageModule.metadata.title
+		html: renderHtml,
+		title: pageModule.metadata?.title || '',
 	};
 };
 

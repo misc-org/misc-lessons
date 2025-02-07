@@ -78,14 +78,14 @@
 	};
 
 	const termLinksCache = new Map(
-		terms.map((term: { title: string; description: string }) => [term.title, createTermLink(term)])
+		//terms.map((term: { title: string; description: string }) => [term.title, createTermLink(term)])
 	);
 
 	const wrapTermsWithLinks = (content: string) => {
 		let processed = content;
 		terms.forEach((term: { title: string; description: string }) => {
 			const regex = new RegExp(TERM_BOUNDARY.source.replace('TARGET', term.title), 'gu');
-			processed = processed.replace(regex, termLinksCache.get(term.title) || '$1$2');
+			//processed = processed.replace(regex, termLinksCache.get(term.title) || '$1$2');
 		});
 		return processed;
 	};
@@ -214,8 +214,8 @@
 		try {
 			await loadPage(data.props.lesson, data.props.id);
 
-			html = data.props.lessonHtml;
-			html = rewriteTags(html, terms);
+			html = data.props.lessonHtml.html;
+			//html.body = rewriteTags(html.body.join(''), terms);
 		} catch (error) {
 			console.error('Failed to load page:', error);
 		}
@@ -228,7 +228,7 @@
 
 {#if Page}
 	<div class="markdown-body h-full w-full" bind:this={container}>
-		{@html html}
+		{@html html.body}
 	</div>
 	{#if activeTerm}
 		<Tip
