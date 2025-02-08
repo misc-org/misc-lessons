@@ -1,0 +1,1 @@
+import{a as e,t as o}from"./DrIIKxbq.js";import"./0n3uYtJ6.js";const n={title:"VSCode で Git / GitHub を使えるようにしよう"},{title:i}=n;var r=o("<h1></h1>");function d(a){var t=r();t.textContent=i,e(a,t)}export{d as default,n as metadata};
