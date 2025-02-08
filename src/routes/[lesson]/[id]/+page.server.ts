@@ -1,4 +1,4 @@
-import type { EntryGenerator, PageServerLoad, RouteParams } from './$types';
+import type { EntryGenerator, PageServerLoad } from './$types';
 import type { Component } from 'svelte';
 import { render } from 'svelte/server';
 import { rewriteTags } from '$lib/utils/rewrite';
@@ -11,9 +11,8 @@ interface PageModule {
 }
 
 const loadPage = async (lesson: string, id: string) => {
-	const pages = import.meta.glob('/src/lib/docs/**/lessons/**/index.svx', {
+	const pages = import.meta.glob<PageModule>('/src/lib/docs/**/lessons/**/index.svx', {
 		eager: true,
-		import: 'default'
 	});
 
 	const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
@@ -23,14 +22,13 @@ const loadPage = async (lesson: string, id: string) => {
 		throw new Error(`Page not found: ${pagePath}`);
 	}
 
-	let renderHtml = render(pageModule as unknown as Component, {});
+	let renderHtml = render(pageModule.default as unknown as Component, {});
 
 	const terms = await import(`\$lib/docs/${lesson}/terms/index.json`);
 
-	renderHtml.body = rewriteTags(renderHtml.body, terms.default, lesson);
+	renderHtml.body = rewriteTags(renderHtml.body, lesson, terms.default);
 
 	return {
-		component: pageModule.default,
 		html: renderHtml,
 		title: pageModule.metadata?.title || ''
 	};
@@ -39,13 +37,14 @@ const loadPage = async (lesson: string, id: string) => {
 export const load: PageServerLoad = async ({ params }) => {
 	const { lesson, id } = params;
 
-	const lessonHtml = await loadPage(lesson, id);
+	const { html, title } = await loadPage(lesson, id);
 
 	return {
 		props: {
 			lesson,
 			id,
-			lessonHtml
+			html,
+			title
 		}
 	};
 };
@@ -53,7 +52,6 @@ export const load: PageServerLoad = async ({ params }) => {
 export const entries: EntryGenerator = async (): Promise<Array<{ lesson: string; id: string }>> => {
 	const pagesAll = import.meta.glob('/src/lib/docs/*/lessons/*/index.svx', { eager: true });
 
-	// 重複しないキー（"lesson/id" 形式）を作成
 	const uniqueKeys: Record<string, true> = Object.keys(pagesAll).reduce(
 		(acc, filePath) => {
 			const parts = filePath.split('/');
@@ -66,7 +64,6 @@ export const entries: EntryGenerator = async (): Promise<Array<{ lesson: string;
 		{} as Record<string, true>
 	);
 
-	// キーを分割してパラメーターオブジェクトを生成
 	return Object.keys(uniqueKeys).map((key) => {
 		const [lesson, id] = key.split('/');
 		return { lesson, id };

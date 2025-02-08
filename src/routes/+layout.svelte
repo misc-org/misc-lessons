@@ -43,8 +43,8 @@
 >
 	<div
 		class="fixed right-6 flex h-[40px] w-[40px] transition-[opacity,bottom] duration-300 {isScrollable
-			? 'bottom-[76px] opacity-100'
-			: 'bottom-[60px] opacity-0'}"
+			? 'bottom-8 opacity-100'
+			: 'bottom-6 opacity-0'}"
 	>
 		<button
 			onclick={() => {
@@ -59,16 +59,24 @@
 	<header class="flex h-[60px] w-full items-center justify-center gap-5 bg-[#0e1734]">
 		<a href={'/'} class="flex h-full w-fit items-center justify-center gap-4">
 			<img {src} alt="svelte" class="h-[20px] object-cover" />
-			<h1 class="text-xl font-bold text-[#fff]">講座総合 MISC Lessons</h1>
+			<h1 class="text-lg md:text-xl font-bold text-[#fff]">講座総合 MISC Lessons</h1>
 		</a>
 	</header>
 	<div
-		class="flex min-h-[calc(100svh-120px)] w-full flex-col items-center justify-start px-24 py-16"
+		class="flex min-h-[calc(100svh-120px)] w-full flex-col items-center justify-start py-8 sm:py-16 px-6 sm:px-10 md:px-24"
 	>
 		{@render children()}
 	</div>
-	<footer class="flex h-[60px] w-full items-center justify-center bg-[#0e1734]">
-		<p class="text-sm text-[#fff]">© 2025 MISC</p>
+	<footer class="flex flex-row gap-4 h-[120px] w-full items-center justify-center text-xs md:text-sm bg-[#0e1734] text-[#fff]">
+		<p>© 2025 MISC</p>
+		<a href="https://github.com/misc-org" class="flex flex-row items-center gap-2">
+			org:
+			<Icon icon="akar-icons:github-fill" class="h-6 w-6" />
+		</a>
+		<a href="https://github.com/misc-org/misc-lessons" class="flex flex-row items-center gap-2 ">
+			repo:
+			<Icon icon="catppuccin:folder-github" class="h-6 w-6" />
+		</a>
 	</footer>
 </main>
 
