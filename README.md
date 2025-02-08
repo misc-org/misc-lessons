@@ -21,8 +21,10 @@
 3. `http://localhost:5173` を `http://<自身の IP アドレス>:5173` に変更してアクセスしてください。
 
 **アドレスのローカル内に限定した公開について (ファイアウォールの設定)**
+
 - ファイアウォールの設定を変更して、ポート 5173 を開放してください。
 - これらのコマンドはすべて `sudo` 権限が必要です。
+
 ```shell
 # Windows
 New-NetFirewallRule -DisplayName "Allow Localhost Access" -Direction Inbound -Protocol TCP -LocalPort 5173 -Action Allow

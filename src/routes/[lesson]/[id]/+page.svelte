@@ -81,7 +81,7 @@
 		}
 
 		const pages = import.meta.glob<ModuleType>('/src/lib/docs/**/lessons/**/index.svx', {
-			eager: true,
+			eager: true
 		});
 
 		const pagePath = `/src/lib/docs/${lesson}/lessons/${id}/index.svx`;
@@ -139,7 +139,7 @@
 		};
 	});
 
-	let html: { head: string, html: string, body: string } = $state({ head: '', html: '', body: '' });
+	let html: { head: string; html: string; body: string } = $state({ head: '', html: '', body: '' });
 
 	onMount(async () => {
 		try {

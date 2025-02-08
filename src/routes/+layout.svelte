@@ -23,7 +23,7 @@
 
 		if (typeof window !== 'undefined') {
 			window.addEventListener('scroll', handleScroll);
-            handleScroll();
+			handleScroll();
 		}
 
 		return () => {
@@ -41,19 +41,23 @@
 <main
 	class="relative flex min-h-[100svh] flex-col items-center justify-start overflow-auto bg-[#f0f0f0]"
 >
-	<div class="fixed right-6 flex h-[40px] w-[40px] duration-300 transition-[opacity,bottom] {isScrollable ? 'opacity-100 bottom-[76px]' : 'opacity-0 bottom-[60px]'}">
+	<div
+		class="fixed right-6 flex h-[40px] w-[40px] transition-[opacity,bottom] duration-300 {isScrollable
+			? 'bottom-[76px] opacity-100'
+			: 'bottom-[60px] opacity-0'}"
+	>
 		<button
 			onclick={() => {
-                if (typeof window === 'undefined') return;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-			class="w-full h-full bg-slate-50 flex items-center justify-center rounded-full shadow-md"
+				if (typeof window === 'undefined') return;
+				window.scrollTo({ top: 0, behavior: 'smooth' });
+			}}
+			class="flex h-full w-full items-center justify-center rounded-full bg-slate-50 shadow-md"
 		>
 			<Icon icon="mdi:arrow-up" class="h-6 w-6 text-slate-900" />
 		</button>
 	</div>
 	<header class="flex h-[60px] w-full items-center justify-center gap-5 bg-[#0e1734]">
-		<a href={"/"} class="flex h-full w-fit items-center justify-center gap-4">
+		<a href={'/'} class="flex h-full w-fit items-center justify-center gap-4">
 			<img {src} alt="svelte" class="h-[20px] object-cover" />
 			<h1 class="text-xl font-bold text-[#fff]">講座総合 MISC Lessons</h1>
 		</a>

@@ -54,14 +54,17 @@ export const entries: EntryGenerator = async (): Promise<Array<{ lesson: string;
 	const pagesAll = import.meta.glob('/src/lib/docs/*/lessons/*/index.svx', { eager: true });
 
 	// 重複しないキー（"lesson/id" 形式）を作成
-	const uniqueKeys: Record<string, true> = Object.keys(pagesAll).reduce((acc, filePath) => {
-		const parts = filePath.split('/');
-		const lesson = parts[4];
-		const id = parts[6];
-		const key = `${lesson}/${id}`;
-		acc[key] = true;
-		return acc;
-	}, {} as Record<string, true>);
+	const uniqueKeys: Record<string, true> = Object.keys(pagesAll).reduce(
+		(acc, filePath) => {
+			const parts = filePath.split('/');
+			const lesson = parts[4];
+			const id = parts[6];
+			const key = `${lesson}/${id}`;
+			acc[key] = true;
+			return acc;
+		},
+		{} as Record<string, true>
+	);
 
 	// キーを分割してパラメーターオブジェクトを生成
 	return Object.keys(uniqueKeys).map((key) => {
