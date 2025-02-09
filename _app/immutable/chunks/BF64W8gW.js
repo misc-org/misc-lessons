@@ -1,0 +1,1 @@
+import{a as e,t as o}from"./Bzv7Cztw.js";import"./C4GsahBc.js";const n={title:"Git の初期設定をしよう"},{title:r}=n;var i=o("<h1></h1>");function m(a){var t=i();t.textContent=r,e(a,t)}export{m as default,n as metadata};
