@@ -38,6 +38,14 @@
 	});
 </script>
 
+<svelte:head>
+	<title>MISC Lessons</title>
+	<meta name="description" content="情報系技術の指南書・指導書をまとめている MISC Lesson の総合サイトです。" />
+	<meta property="og:title" content="MISC Lessons" />
+	<meta property="og:description" content="情報系技術の指南書・指導書をまとめている MISC Lesson の総合サイトです。" />
+	<meta property="og:image" content="/favicon.png" />
+</svelte:head>
+
 <main
 	class="relative flex min-h-[100svh] flex-col items-center justify-start overflow-auto bg-[#f0f0f0]"
 >
