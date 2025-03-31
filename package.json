@@ -12,7 +12,9 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"create": "bun run scripts/createLesson.ts",
+		"add": "bun run scripts/addLesson.ts"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -48,6 +50,7 @@
 	"dependencies": {
 		"@fontsource-variable/m-plus-1": "^5.1.1",
 		"@iconify/svelte": "^4.2.0",
-		"github-markdown-css": "^5.8.1"
+		"github-markdown-css": "^5.8.1",
+		"inquirer": "^12.5.0"
 	}
 }
